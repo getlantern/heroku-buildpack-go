@@ -483,8 +483,12 @@ case "${TOOL}" in
 
         step "Determining packages to install"
         pkgs=${GO_INSTALL_PACKAGE_SPEC:-$(awk '{ if ($1 == "//" && $2 == "+heroku" && $3 == "install" ) { print substr($0, index($0,$4)); exit }}' ${goMOD})}
+        info "pkgs is ${pkgs}"
         if [ -z "${pkgs}" ]; then
+            info "pkgs was empty"
+            go list
             pkgs=$(mainPackagesInModule)
+            info "pkgs is now ${pkgs}"
             if [ -z "${pkgs}" ]; then
                 warn ""
                 warn "No main packages found in module ${name}"
@@ -503,9 +507,12 @@ case "${TOOL}" in
                 mcount "pkginstall.auto"
             fi
         else
+            info "pkgs was not empty"
             if [ -z "${GO_INSTALL_PACKAGE_SPEC}" ]; then
+                info 'mcount "pkginstall.go_install_package_spec"'
                 mcount "pkginstall.go_install_package_spec"
             else
+                info 'mcount "pkginstall.heroku_install"'
                 mcount "pkginstall.heroku_install"
             fi
         fi
